@@ -53,7 +53,9 @@ namespace adns {
 
 #define ENABLE_MOTION_BURST                      0
 
-#define RESET3360                                9
+#define RESET3360                                8
+#define LEDPIN                                   9
+
 // | ADNS-9800 | Arduino Uno Pins
 // | SS ncs    | 10
 // | MOSI      | 11
@@ -63,7 +65,7 @@ namespace adns {
 // | VI        |+5V (First You must Activate 5V Mode)
 // | AG        | Gnd
 // | DG        | Gnd
-// | 3360rst   | 9
+// | 3360rst   | 8
     class controller {
 public:
         enum MotionBurst {
@@ -96,6 +98,7 @@ private:
         void perform_startup();
         void perform_startup2();
         void display_registers();
+        static void toggleLed();
 
         static void com_begin();
         static void com_end();
@@ -124,6 +127,12 @@ private:
     volatile byte _fault = 0;
     volatile byte _squal = 0;
     volatile byte _moved = 0;
+
+    void controller::toggleLed(){
+        //toggle led
+        pinMode(LEDPIN,OUTPUT);
+        digitalWrite(LEDPIN,!digitalRead(LEDPIN));
+    }
 
     void controller::reset_xy_dist() {
         _ux = _uy = _ux_dist = _uy_dist = 0;
@@ -168,7 +177,6 @@ private:
 
     void controller::read_motion_burst_data() {
         com_begin();
-
         // send adress of the register, with MSBit = 1 to indicate it's a write
         SPI.transfer(REG_Motion_Burst & 0x7f);
         //delayMicroseconds(100); // tSRAD
@@ -222,6 +230,7 @@ private:
     void controller::update_motion_data() {
         if(_boot_complete != 9) return;
         com_begin();
+        toggleLed(); //blink led
         _data[Motion] = read_reg(REG_Motion);
         _data[SQUAL] = read_reg(REG_SQUAL);
         _mot = _data[Motion] & 0x80;
