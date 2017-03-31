@@ -51,7 +51,7 @@ namespace adns {
 #define REG_SROM_Load_Burst                      0x62
 #define REG_Pixel_Burst                          0x64
 
-#define ENABLE_MOTION_BURST                      0
+#define ENABLE_MOTION_BURST                      1
 
 #define RESET3360                                9
 // | ADNS-9800 | Arduino Uno Pins
