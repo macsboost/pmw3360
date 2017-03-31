@@ -254,8 +254,12 @@ private:
         // send the firmware to the chip, cf p.18 of the datasheet
         Serial.println("Uploading firmware...");
 
+        write_reg(REG_Configuration_II, 0x00);  //based on https://pastebin.com/TQmL6wA3
+
         // set the configuration_IV register in 3k firmware mode
-        write_reg(REG_Configuration_IV, 0x02); // bit 1 = 1 for 3k mode, other bits are reserved 
+        //write_reg(REG_Configuration_IV, 0x00); // bit 1 = 1 for 3k mode, other bits are reserved //was 03 mac
+
+        write_reg(0x22, 0x00);
 
         // write 0x1d in SROM_enable reg for initializing
         write_reg(REG_SROM_Enable, 0x1d); 
@@ -356,11 +360,11 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
   write_reg(0x22, 0x00);
   
   //srom download
-  write_reg(0x13, 0x1d);
-  delay(10);
-  write_reg(0x13, 0x18);
+  //write_reg(0x13, 0x1d);
+  //delay(10);
+  //write_reg(0x13, 0x18);
   
-  digitalWrite(_ncs,LOW);;
+  //digitalWrite(_ncs,LOW);;
   upload_firmware();
   
   /* upload procedure for avago
