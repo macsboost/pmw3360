@@ -16,8 +16,9 @@ void loop() {
     ac.loop();
     
     //delay(100);
-    //update_motion_data()
+    //ac.update_motion_data();
     //ac.printMotionData();
+    Serial.println(ac.read_reg(0x07),HEX);
 }
 
 

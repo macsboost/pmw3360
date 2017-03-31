@@ -92,7 +92,9 @@ public:
         
         void reset_xy_dist();
         void printMotionData();
-
+        static byte read_reg(byte reg_addr);
+        static void write_reg(byte reg_addr, byte data);
+        
 private:
         void upload_firmware();
         void perform_startup();
@@ -102,8 +104,8 @@ private:
 
         static void com_begin();
         static void com_end();
-        static byte read_reg(byte reg_addr);
-        static void write_reg(byte reg_addr, byte data);
+
+
         static void read_motion_burst_data();
         static void copy_data();
         static void update_motion_data();
@@ -177,6 +179,7 @@ private:
 
     void controller::read_motion_burst_data() {
         com_begin();
+        toggleLed();
         // send adress of the register, with MSBit = 1 to indicate it's a write
         SPI.transfer(REG_Motion_Burst & 0x7f);
         //delayMicroseconds(100); // tSRAD
@@ -449,7 +452,9 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
   delayMicroseconds(500); //arbitrary padding
   
   //motion burst
-  write_reg(0x50, 0x00);
+  if (ENABLE_MOTION_BURST  == 1 ){
+    write_reg(0x50, 0x00);
+  }
   delayMicroseconds(9);
   digitalWrite(_ncs,LOW);;
   SPI.transfer(0x50);
@@ -566,7 +571,7 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
         tmpdata = read_reg(0x25);
         Serial.print("            0x24 0x");
         Serial.println(tmpdata, HEX);
-        tmpdata = read_reg(0x2A);
+        tmpdata = read_reg(REG_SROM_ID);
         Serial.print("SROMVER 0x03     0x");
         Serial.println(tmpdata, HEX);
 
