@@ -51,7 +51,7 @@ namespace adns {
 #define REG_SROM_Load_Burst                      0x62
 #define REG_Pixel_Burst                          0x64
 
-#define ENABLE_MOTION_BURST                      1
+#define ENABLE_MOTION_BURST                      0
 
 #define RESET3360                                9
 // | ADNS-9800 | Arduino Uno Pins
@@ -356,8 +356,8 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
   read_reg(0x06);
 
   //dunno??
-  write_reg(0x10, 0x00); //turn sleep mode off
-  write_reg(0x22, 0x00);
+  //write_reg(0x10, 0x00); //turn sleep mode off
+  //write_reg(0x22, 0x00);
   
   //srom download
   //write_reg(0x13, 0x1d);
@@ -541,14 +541,6 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
         SPI.setBitOrder(MSBFIRST);
         SPI.setClockDivider(16);//8
         
-        uint8_t id = read_reg(0x00);
-        if (id == 0x42)
-        Serial.println(F("PMW3360 found"));
-        else {
-          Serial.print(F("Could not find ADNS-3080: "));
-          Serial.println(id, HEX);
-        }
-
         perform_startup2();  //use startup 2 for 3360
         display_registers();
 
@@ -568,6 +560,14 @@ void controller::perform_startup2()  //modified by mac 3/24/2017
         tmpdata = read_reg(0x2A);
         Serial.print("SROMVER 0x03     0x");
         Serial.println(tmpdata, HEX);
+
+        uint8_t id = read_reg(0x00);
+        if (id == 0x42)
+        Serial.println(F("PMW3360 found 0x42"));
+        else {
+          Serial.print(F("Could not find PMW3360: !=0x42"));
+          Serial.println(id, HEX);
+        }
         
         delay(100);
         _boot_complete=9;
